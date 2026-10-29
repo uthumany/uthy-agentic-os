@@ -41,6 +41,10 @@ class UthyAgentWindow(Adw.ApplicationWindow):
             button = Gtk.Button(label=label)
             button.set_halign(Gtk.Align.FILL)
             button.add_css_class("nav-item")
+            if label == "Settings":
+                button.connect("clicked", self._open_settings)
+            else:
+                button.set_tooltip_text(f"{label} view is planned for a later build.")
             sidebar.append(button)
 
         root.append(sidebar)
@@ -66,7 +70,7 @@ class UthyAgentWindow(Adw.ApplicationWindow):
         content.append(header)
 
         intro = Gtk.Label(
-            label="Describe a task. UthyAgent will observe, act, and verify each step."
+            label="Describe a task. UthyAgent is being built around an observe, act, and verify workflow."
         )
         intro.set_halign(Gtk.Align.START)
         intro.set_wrap(True)
@@ -94,14 +98,14 @@ class UthyAgentWindow(Adw.ApplicationWindow):
         controls.append(run_button)
 
         voice_button = Gtk.Button(label="Voice input")
-        voice_button.set_tooltip_text("Voice input will be enabled after speech recognition is configured.")
+        voice_button.set_tooltip_text("Voice input is planned and is not connected yet.")
         voice_button.set_sensitive(False)
         controls.append(voice_button)
 
         stop_button = Gtk.Button(label="Emergency stop")
-        stop_button.add_css_class("destructive-action")
-        stop_button.set_tooltip_text("Stops the active task when execution support is connected.")
+        stop_button.set_tooltip_text("Task execution is not connected yet.")
         stop_button.set_sensitive(False)
+        stop_button.add_css_class("destructive-action")
         controls.append(stop_button)
         command_panel.append(controls)
         content.append(command_panel)
@@ -112,7 +116,7 @@ class UthyAgentWindow(Adw.ApplicationWindow):
         content.append(section_title)
 
         self.activity = Gtk.Label(
-            label="Ready. Desktop automation backends are not connected in this scaffold."
+            label="Scaffold ready. Desktop automation execution is not yet connected."
         )
         self.activity.set_wrap(True)
         self.activity.set_halign(Gtk.Align.START)
@@ -123,6 +127,10 @@ class UthyAgentWindow(Adw.ApplicationWindow):
 
         self._load_css()
 
+    def _open_settings(self, _button: Gtk.Button) -> None:
+        from .settings import ProviderSettingsWindow
+        ProviderSettingsWindow(self).present()
+
     def _on_start_task(self, _button: Gtk.Button) -> None:
         command = self.command.get_text().strip()
         if not command:
@@ -132,7 +140,7 @@ class UthyAgentWindow(Adw.ApplicationWindow):
         self.activity.set_text(
             "Task captured: "
             + command
-            + "\nThe planning and automation engine must be configured before this task can execute."
+            + "\nThe planning and desktop execution engine is not yet connected."
         )
 
     def _load_css(self) -> None:
@@ -167,7 +175,6 @@ class UthyAgentWindow(Adw.ApplicationWindow):
         .nav-item {
             border-radius: 13px;
             min-height: 38px;
-            text-align: left;
         }
         .status-pill {
             background: alpha(#b6f2d8, 0.15);
@@ -181,7 +188,7 @@ class UthyAgentWindow(Adw.ApplicationWindow):
             border-radius: 16px;
             padding: 18px;
         }
-        entry {
+        entry, passwordentry {
             min-height: 44px;
             border-radius: 12px;
         }
