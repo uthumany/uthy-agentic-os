@@ -1,0 +1,32 @@
+name: UthyAgent Desktop Tests
+
+on:
+  push:
+    paths:
+      - "desktop-agent/**"
+      - ".github/workflows/uthyagent-desktop-test.yml"
+  pull_request:
+    paths:
+      - "desktop-agent/**"
+      - ".github/workflows/uthyagent-desktop-test.yml"
+  workflow_dispatch:
+
+jobs:
+  tests:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: desktop-agent
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: desktop-agent/pyproject.toml
+      - name: Install package and test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[test]"
+      - name: Run tests
+        run: pytest -q
