@@ -1,0 +1,74 @@
+name: UthyAgent Linux Packages
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "uthyagent-v*"
+
+jobs:
+  packages:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install package tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ruby ruby-dev build-essential rpm
+          sudo gem install --no-document fpm
+      - name: Stage application files
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$GITHUB_WORKSPACE/build/package-root"
+          mkdir -p "$ROOT/usr/lib/uthyagent/src"
+          mkdir -p "$ROOT/usr/bin"
+          mkdir -p "$ROOT/usr/share/applications"
+          mkdir -p "$ROOT/usr/share/metainfo"
+          cp -R desktop-agent/src/uthyagent "$ROOT/usr/lib/uthyagent/src/"
+          cp desktop-agent/packaging/uthyagent.desktop "$ROOT/usr/share/applications/app.uthyagent.Desktop.desktop"
+          cp desktop-agent/packaging/app.uthyagent.Desktop.metainfo.xml "$ROOT/usr/share/metainfo/"
+          cat > "$ROOT/usr/bin/uthyagent" <<'EOF'
+          #!/bin/sh
+          export PYTHONPATH="/usr/lib/uthyagent/src${PYTHONPATH:+:$PYTHONPATH}"
+          exec python3 -m uthyagent "$@"
+          EOF
+          chmod 0755 "$ROOT/usr/bin/uthyagent"
+      - name: Build Debian package
+        run: |
+          fpm -s dir -t deb \
+            -n uthyagent \
+            -v 0.1.0 \
+            --architecture native \
+            --description "Local-first AI desktop automation for Linux" \
+            --license MIT \
+            --url "https://github.com/uthumany/uthy-agentic-os/tree/master/desktop-agent" \
+            --depends python3 \
+            --depends python3-gi \
+            --depends gir1.2-gtk-4.0 \
+            --depends gir1.2-adw-1 \
+            --depends python3-httpx \
+            "$GITHUB_WORKSPACE/build/package-root/=/"
+      - name: Build RPM package
+        run: |
+          fpm -s dir -t rpm \
+            -n uthyagent \
+            -v 0.1.0 \
+            --architecture native \
+            --description "Local-first AI desktop automation for Linux" \
+            --license MIT \
+            --url "https://github.com/uthumany/uthy-agentic-os/tree/master/desktop-agent" \
+            --depends python3 \
+            --depends python3-gobject \
+            --depends gtk4 \
+            --depends libadwaita \
+            --depends python3-httpx \
+            "$GITHUB_WORKSPACE/build/package-root/=/"
+      - name: Upload packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: uthyagent-linux-packages
+          path: |
+            *.deb
+            *.rpm
+          if-no-files-found: error
