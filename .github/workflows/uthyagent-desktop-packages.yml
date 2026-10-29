@@ -47,7 +47,9 @@ jobs:
             --depends python3-gi \
             --depends gir1.2-gtk-4.0 \
             --depends gir1.2-adw-1 \
+            --depends gir1.2-atspi-2.0 \
             --depends python3-httpx \
+            --depends python3-keyring \
             "$GITHUB_WORKSPACE/build/package-root/=/"
       - name: Build RPM package
         run: |
@@ -62,7 +64,9 @@ jobs:
             --depends python3-gobject \
             --depends gtk4 \
             --depends libadwaita \
+            --depends at-spi2-core \
             --depends python3-httpx \
+            --depends python3-keyring \
             "$GITHUB_WORKSPACE/build/package-root/=/"
       - name: Upload packages
         uses: actions/upload-artifact@v4
