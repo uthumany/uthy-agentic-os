@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>app.uthyagent.Desktop</id>
+  <name>UthyAgent</name>
+  <summary>Local-first AI desktop automation for Linux</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <description>
+    <p>UthyAgent accepts natural-language tasks and is designed to observe desktop interfaces, execute permitted actions, and verify results.</p>
+    <p>Desktop automation support depends on the active Linux session and installed accessibility interfaces.</p>
+  </description>
+  <launchable type="desktop-id">app.uthyagent.Desktop.desktop</launchable>
+  <url type="homepage">https://github.com/uthumany/uthy-agentic-os/tree/master/desktop-agent</url>
+  <url type="bugtracker">https://github.com/uthumany/uthy-agentic-os/issues</url>
+  <content_rating type="oars-1.1"/>
+</component>
