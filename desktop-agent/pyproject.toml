@@ -12,6 +12,7 @@ license = { text = "MIT" }
 authors = [{ name = "uthumany" }]
 dependencies = [
   "httpx>=0.27,<1",
+  "keyring>=25,<26",
 ]
 
 [project.optional-dependencies]
